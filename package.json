@@ -1,6 +1,6 @@
 {
   "name": "express-events",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Improved event emitter for express",
   "main": "index.js",
   "scripts": {
