@@ -1,5 +1,5 @@
 {
-  "name": "express-events",
+  "name": "@momsfriendlydevco/express-events",
   "version": "1.0.0",
   "description": "Improved event emitter for express",
   "main": "index.js",
