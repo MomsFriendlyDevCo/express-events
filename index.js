@@ -1,6 +1,6 @@
 var eventer = require('@momsfriendlydevco/eventer');
 
-var ee = function(options) {
+var ee = module.exports = function(options) {
 	return function(req, res, next) {
 		// Glue eventer structure onto res
 		eventer.extend(res);
@@ -11,11 +11,20 @@ var ee = function(options) {
 			res.emit('end', ...args)
 				.then(()=> res.$endRaw(...args));
 
+
+		// Overload res.json (copying old version to res.$jsonRaw)
+		res.$jsonRaw = res.json;
+		res.json = (payload, ...args) =>
+			res.emit('json', payload)
+				.then(result => res.$jsonRaw(result, ...args));
+
+
+		// Overload res.sendFile (copying old version to res.$sendFileRaw)
+		res.$sendFileRaw = res.sendFile;
+		res.sendFile = (payload, ...args) =>
+			res.emit('sendFile', payload)
+				.then(()=> res.$sendFileRaw(payload, ...args))
+
 		return next();
 	};
 };
-
-ee.defaults = {
-};
-
-module.exports = ee;
