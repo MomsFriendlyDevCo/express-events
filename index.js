@@ -18,6 +18,13 @@ var ee = module.exports = function(options) {
 			res.emit('json', payload)
 				.then(result => res.$jsonRaw(result, ...args));
 
+		//
+		// Overload res.redirect (copying old version to res.$redirectRaw)
+		res.$redirectRaw = res.redirect;
+		res.redirect = (url) =>
+			res.emit('redirect', url)
+				.then(()=> res.$redirectRaw(url))
+
 
 		// Overload res.sendFile (copying old version to res.$sendFileRaw)
 		res.$sendFileRaw = res.sendFile;

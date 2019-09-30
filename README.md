@@ -64,6 +64,11 @@ app.get('/api/test/json', (req, res) => {
 ```
 
 
+Event: redirect(url)
+--------------------
+Emitted on each call to `res.redirect()` with the original URL payload.
+
+
 Event: sendFile(stream)
 -----------------------
 Emitted on each call to `res.sendFile()` with the read stream.
