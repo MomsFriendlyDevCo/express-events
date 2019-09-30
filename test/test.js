@@ -79,6 +79,22 @@ describe('Express-Events', ()=> {
 			.then(res => expect(res.data).to.be.deep.equal({foo: 'Foo!'}))
 	);
 
+	it('should not alter existing end-points (redirect response x2, x100 hits, random timeouts)', ()=>
+		Promise.all(
+			Array.from(new Array(100))
+				.map(()=>
+					Promise.resolve()
+						.then(()=> new Promise(resolve => setTimeout(resolve, Math.random() * 1000)))
+						.then(()=> axios.get('/undef/baz'))
+						.then(res => expect(res.data).to.be.deep.equal({foo: 'Foo!'}))
+				)
+		)
+			.then(results => {
+				expect(results).to.be.an('array');
+				expect(results).to.have.length(100);
+			})
+	);
+
 	it('event:end', ()=>
 		axios.get('/end')
 			.then(res => expect(emitted.end).to.be.equal(1))
