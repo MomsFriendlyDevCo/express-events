@@ -16,9 +16,13 @@ describe('Express-Events', ()=> {
 		app.use(expressEvents());
 
 		// Regular Express handlers
-		app.get('/foo', (req, res) => res.send({foo: 'Foo!'}));
-		app.get('/bar', (req, res) => res.redirect('/foo'));
-		app.get('/baz', (req, res) => res.redirect('/bar'));
+		app.get('/return/foo', (req, res) => res.send({foo: 'Foo!'}));
+		app.get('/return/bar', (req, res) => res.redirect('/return/foo'));
+		app.get('/return/baz', (req, res) => res.redirect('/return/bar'));
+
+		app.get('/undef/foo', (req, res) => { res.send({foo: 'Foo!'}) });
+		app.get('/undef/bar', (req, res) => { res.redirect('/undef/foo') });
+		app.get('/undef/baz', (req, res) => { res.redirect('/undef/bar') });
 
 
 		// Event handler tests
@@ -45,18 +49,33 @@ describe('Express-Events', ()=> {
 
 	after(()=> server && server.close());
 
-	it('should not alter existing end-points (JSON response)', ()=>
-		axios.get('/foo')
+	it('should not alter existing end-points (JSON response, direct return)', ()=>
+		axios.get('/return/foo')
 			.then(res => expect(res.data).to.be.deep.equal({foo: 'Foo!'}))
 	);
 
-	it('should not alter existing end-points (redirect response)', ()=>
-		axios.get('/bar')
+	it('should not alter existing end-points (redirect response, direct return)', ()=>
+		axios.get('/return/bar')
 			.then(res => expect(res.data).to.be.deep.equal({foo: 'Foo!'}))
 	);
 
-	it('should not alter existing end-points (redirect response x2)', ()=>
-		axios.get('/baz')
+	it('should not alter existing end-points (redirect response x2, direct return)', ()=>
+		axios.get('/return/baz')
+			.then(res => expect(res.data).to.be.deep.equal({foo: 'Foo!'}))
+	);
+
+	it('should not alter existing end-points (JSON response, undef return)', ()=>
+		axios.get('/undef/foo')
+			.then(res => expect(res.data).to.be.deep.equal({foo: 'Foo!'}))
+	);
+
+	it('should not alter existing end-points (redirect response, undef return)', ()=>
+		axios.get('/undef/bar')
+			.then(res => expect(res.data).to.be.deep.equal({foo: 'Foo!'}))
+	);
+
+	it('should not alter existing end-points (redirect response x2, undef return)', ()=>
+		axios.get('/undef/baz')
 			.then(res => expect(res.data).to.be.deep.equal({foo: 'Foo!'}))
 	);
 
